@@ -9,6 +9,7 @@
 # or their download link is provided. They are then transformed in the CRS 'EPSG:4326' and unified.
 # The end result is one .shp file 'SPC.shp' that contains all geospatial information of currently 
 # (as of April, 2024) installed submarine power cables (SPC) in the (Southern) North Sea.
+# The resulting shapefile will be saved in the folder '03_results'
 
 # The relevant countries are: Belgium (BE), Germany (GER), United Kingdom (UK), Netherlands (NL), Denmark (DK), France (FR)
 
