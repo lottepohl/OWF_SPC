@@ -362,33 +362,37 @@ NO_SPC <-
     sf::st_zm(., drop = T, what = "ZM") # convert 'LINESTRING Z' to 'LINESTRING'
 
 
-test <-
-  NO_SPC %>%
-    dplyr::mutate(length = sf::st_length(geometry))
+# test <-
+#   NO_SPC %>%
+#     dplyr::mutate(length = sf::st_length(geometry)) #works!
 
-max(test$length)
-mean(test$length)
-median(test$length)
-min(test$length)
+# max(test$length)
+# mean(test$length)
+# median(test$length)
+# min(test$length)
 
 # 08. combine everything --------------------------------------------------
 
-SPC <- 
+SPC_4326 <- 
   rbind(BE_SPC,
         GER_SPC,
         FR_SPC,
         NL_SPC,
-        NO_SPC)
+        NO_SPC) %>% 
+  dplyr::mutate(length_km = st_length(geometry),
+                status = ifelse(status == 'planned', "Planned", status)) %>% 
+  dplyr::filter(! status %in% c("OutOfUse", "Unknown", "UnderConstruction"))
 
-SPC2 <- 
-  SPC %>% 
-    # st_cast(., 'LINESTRING')
-  dplyr::mutate(length = st_length(geometry))
+units(SPC_4326$length_km) <- 'km'
 
-st_crs(SPC) # crs still EPSG:4326
+# st_crs(SPC_4326) # crs still EPSG:4326
+
+SPC_3035 <- st_transform(SPC_4326, "EPSG:3035")
+st_crs(SPC_3035)
 
 ## write file --------------------------------------------------------------
-sf::st_write(obj = SPC, dsn = file.path(getwd(), "02_results", "SPC.shp"), append = F)
+sf::st_write(obj = SPC_4326, dsn = file.path(getwd(), "02_results", "SPC_4326.shp"), append = F)
+sf::st_write(obj = SPC_3035, dsn = file.path(getwd(), "02_results", "SPC_3035.shp"), append = F)
 
 
 # overview map ------------------------------------------------------------
