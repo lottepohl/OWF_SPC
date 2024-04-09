@@ -315,7 +315,7 @@ NL_SPC <- rbind(NL_1_SPC, NL_2_SPC)
 # transform crs
 sf::st_crs(NL_SPC) 
 NL_SPC <- sf::st_transform(NL_SPC, this_crs)
-rm(NL_1_SPC, NL_2_SPC)
+rm(NL_1_SPC, NL_1_orig, NL_2_SPC, NL_2_orig)
 
 ## write file --------------------------------------------------------------
 # sf::st_write(obj = NL_SPC, dsn = file.path(getwd(), "00_data", paste0(this_country, file_suffix, ".shp")), append = F)
@@ -414,4 +414,7 @@ leaflet() %>%
   addPolylines(data = NO_SPC,
                opacity = 1) %>%
   addScaleBar(options = scaleBarOptions())
- 
+
+# remove files ------------------------------------------------------------
+
+rm(BE_SPC_orig, GER_SPC_orig, FR_SPC_orig, NO_SPC_orig)
