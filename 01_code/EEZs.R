@@ -42,23 +42,24 @@ rm(list = ls()) # remove all variables
 
 this_crs <- "EPSG:4326"
 file_suffix <- "_crs_EPSG4326"
-these_column_names <- c("country", "status", "name", "id", "owner", "technical_info", "voltage", "comment")
+these_column_names <- c("MRGID", "gazetteerSource", "placeType", "latitude", "longitude", "minLatitude", "minLongitude", "maxLatitude", "maxLongitude", "precision", 
+"preferredGazetteerName", "preferredGazetteerNameLang", "status" , "accepted") #, "the_geom"
 
 
 # 00. functions -----------------------------------------------------------
 
-add_missing_cols <- function(col_names, SPC_df){
+add_missing_cols <- function(col_names, EEZs_df){
   # add column from `these_column_names` that are not yet present
-  missing_columns <- base::setdiff(these_column_names, names(SPC_df))
+  missing_columns <- base::setdiff(these_column_names, names(EEZs_df))
   
   
   # Create missing columns with NA values
   for (col_name in missing_columns) {
-    SPC_df[[col_name]] <- NA
+    EEZs_df[[col_name]] <- NA
   }
   
   result <- 
-    SPC_df %>% 
+    EEZs_df %>% 
     dplyr::select(all_of(these_column_names))
 }
 
@@ -66,7 +67,7 @@ add_missing_cols <- function(col_names, SPC_df){
 # The mrgid for `gaz_search()` for each country's EEZ is found here: https://www.marineregions.org/gazetteer.php?p=search
 
 # Europe_EEZ <- mregions2::gaz_search(23734) %>% mregions2::gaz_geometry() #not needed here
-BE_EEZ <- mregions2::gaz_search(2393) %>% mregions2::gaz_geometry()
+BE_EEZ <- mregions2::gaz_search(2393) %>% mregions2::gaz_geometry() %>%  add_missing_cols(these_column_names, .) %>%  dplyr::rename(the_geom = geometry)
 UK_EEZ <- mregions2::gaz_search(5696) %>% mregions2::gaz_geometry()
 IRL_EEZ <- mregions2::gaz_search(5681) %>% mregions2::gaz_geometry()
 NL_EEZ <- mregions2::gaz_search(5668) %>% mregions2::gaz_geometry()
@@ -80,17 +81,29 @@ SE_EEZ <- mregions2::gaz_search(5694) %>% mregions2::gaz_geometry()
 NO_EEZ <- mregions2::gaz_search(5686) %>% mregions2::gaz_geometry()
 # CH <- mregions2::gaz_search(2179) %>% mregions2::gaz_geometry()
 # LUX <- mregions2::gaz_search(2233) %>% mregions2::gaz_geometry()
+Southern_North_Sea <- mregions2::gaz_search(22253) %>% mregions2::gaz_geometry()
+North_Sea <- mregions2::gaz_search(2350) %>% mregions2::gaz_geometry()
 
 # Belgium (BE), Germany (GER), United Kingdom (UK), Ireland (IRL), Netherlands (NL), Denmark (DK), France (FR),
 # Sweden (SE). Poland (PL), Czech Republic (CZ), Austria (AUT), Slovakia (SL), Norway (NO), Switzerland (CH), Luxembourg (LUX)
 
 # 02. combine data --------------------------------------------------------
 
-countries_4326 <- 
-  rbind(AUT,
-        BE,
-        CH,
-        CZ,
-        DK,
-        FR,)
+EEZs_4326 <- 
+  rbind(BE_EEZ, DK_EEZ, FR_EEZ, IRL_EEZ, NL_EEZ, NO_EEZ, SE_EEZ, UK_EEZ)
 
+EEZs_3035 <- st_transform(EEZs_4326, "EPSG:3035")
+
+
+# 03. write files ---------------------------------------------------------
+
+sf::st_write(obj = EEZs_4326, dsn = file.path(getwd(), "02_results", "EEZs_4326.shp"), append = F)
+sf::st_write(obj = EEZs_3035, dsn = file.path(getwd(), "02_results", "EEZs_3035.shp"), append = F)
+
+
+## Sea data ----------------------------------------------------------------
+
+Southern_North_Sea_3035 <- st_transform(Southern_North_Sea, "EPSG:3035")
+
+sf::st_write(obj = Southern_North_Sea, dsn = file.path(getwd(), "02_results", "Southern_North_Sea_4326.shp"), append = F)
+sf::st_write(obj = Southern_North_Sea_3035, dsn = file.path(getwd(), "02_results", "Southern_North_Sea_3035.shp"), append = F)
