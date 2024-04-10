@@ -380,7 +380,10 @@ SPC_4326 <-
         NL_SPC,
         NO_SPC) %>% 
   dplyr::mutate(length_km = st_length(geometry),
-                status = ifelse(status == 'planned', "Planned", status)) %>% 
+                status = ifelse(status == 'planned', "Planned", status),
+                status = ifelse(status %in% c("Planned", "Approved"),
+                                "Planned",
+                                status)) %>% 
   dplyr::filter(! status %in% c("OutOfUse", "Unknown", "UnderConstruction"))
 
 units(SPC_4326$length_km) <- 'km'
@@ -396,24 +399,24 @@ sf::st_write(obj = SPC_3035, dsn = file.path(getwd(), "02_results", "SPC_3035.sh
 
 
 # overview map ------------------------------------------------------------
-
-ggplot() +
-  geom_sf(data = SPC)  
-
-leaflet() %>% 
-  addTiles() %>% 
-  # addPolylines(data = GER_SPC) %>% 
-  # addPolylines(data = BE_SPC) %>%
-  # addPolylines(data = NL_1_SPC) %>% 
-  # addPolylines(data = NL_2_SPC) %>% 
-  addPolylines(data = FR_SPC) %>% 
-  addPolylines(data = NL_SPC)
-
-leaflet() %>% 
-  addTiles() %>% 
-  addPolylines(data = NO_SPC,
-               opacity = 1) %>%
-  addScaleBar(options = scaleBarOptions())
+# 
+# ggplot() +
+#   geom_sf(data = SPC)  
+# 
+# leaflet() %>% 
+#   addTiles() %>% 
+#   # addPolylines(data = GER_SPC) %>% 
+#   # addPolylines(data = BE_SPC) %>%
+#   # addPolylines(data = NL_1_SPC) %>% 
+#   # addPolylines(data = NL_2_SPC) %>% 
+#   addPolylines(data = FR_SPC) %>% 
+#   addPolylines(data = NL_SPC)
+# 
+# leaflet() %>% 
+#   addTiles() %>% 
+#   addPolylines(data = NO_SPC,
+#                opacity = 1) %>%
+#   addScaleBar(options = scaleBarOptions())
 
 # remove files ------------------------------------------------------------
 
