@@ -68,7 +68,6 @@ add_missing_cols <- function(col_names, country_df){
 # 01. query countries -----------------------------------------------------
 # The mrgid for `gaz_search()` for each country is found here: https://www.marineregions.org/gazetteer.php?p=search
 
-Europe <- mregions2::gaz_search(23734) %>% mregions2::gaz_geometry()
 BE <- mregions2::gaz_search(14) %>% mregions2::gaz_geometry()
 UK <- mregions2::gaz_search(2208) %>% mregions2::gaz_geometry()
 IRL <- mregions2::gaz_search(2114) %>% mregions2::gaz_geometry()
@@ -82,7 +81,7 @@ AUT <- mregions2::gaz_search(2146) %>% mregions2::gaz_geometry()
 SV <- mregions2::gaz_search(2189) %>% mregions2::gaz_geometry()
 NO <- mregions2::gaz_search(2252) %>% mregions2::gaz_geometry()
 CH <- mregions2::gaz_search(2179) %>% mregions2::gaz_geometry()
-LUX <- mregions2::gaz_search(2233) %>% mregions2::gaz_geometry() %>% dplyr::mutate(preferredGazetteerName == "Luxembourg")
+LUX <- mregions2::gaz_search(2233) %>% mregions2::gaz_geometry() %>% dplyr::mutate(preferredGazetteerName = "Luxembourg")
 GER <- mregions2::gaz_search(2101) %>% mregions2::gaz_geometry()
 LI <- mregions2::gaz_search(2235) %>% mregions2::gaz_geometry()
 EST <- mregions2::gaz_search(2110) %>% mregions2::gaz_geometry()
@@ -127,10 +126,17 @@ sf::st_write(obj = countries_4326, dsn = file.path(getwd(), "02_results", "count
 sf::st_write(obj = countries_3035, dsn = file.path(getwd(), "02_results", "countries_3035.shp"), append = F)
 
 
-## European mainland -------------------------------------------------------
+## Continents -------------------------------------------------------
 
-Europe_4326 <- Europe
-Europe_3035 <- st_transform(Europe_4326, "EPSG:3035")
+Europe_4326 <- mregions2::gaz_search(1920) %>% mregions2::gaz_geometry()
+Africa_4326 <- mregions2::gaz_search(1923) %>% mregions2::gaz_geometry()
+Asia_4326 <- mregions2::gaz_search(1921) %>% mregions2::gaz_geometry()
+North_America_4326 <- mregions2::gaz_search(1924) %>% mregions2::gaz_geometry()
 
-sf::st_write(obj = Europe_4326, dsn = file.path(getwd(), "02_results", "Europe_4326.shp"), append = F)
-sf::st_write(obj = Europe_3035, dsn = file.path(getwd(), "02_results", "Europe_3035.shp"), append = F)
+Continents_4326 <-
+  rbind(Europe_4326, Africa_4326, Asia_4326, North_America_4326)
+
+Continents_3035 <- st_transform(Continents_4326, "EPSG:3035")
+
+sf::st_write(obj = Continents_4326, dsn = file.path(getwd(), "02_results", "Continents_4326.shp"), append = F)
+sf::st_write(obj = Continents_3035, dsn = file.path(getwd(), "02_results", "Continents_3035.shp"), append = F)

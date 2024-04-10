@@ -67,13 +67,14 @@ add_missing_cols <- function(col_names, EEZs_df){
 # The mrgid for `gaz_search()` for each country's EEZ is found here: https://www.marineregions.org/gazetteer.php?p=search
 
 # Europe_EEZ <- mregions2::gaz_search(23734) %>% mregions2::gaz_geometry() #not needed here
-BE_EEZ <- mregions2::gaz_search(2393) %>% mregions2::gaz_geometry() %>%  add_missing_cols(these_column_names, .) %>%  dplyr::rename(the_geom = geometry)
+BE_EEZ <- mregions2::gaz_search(3293) %>% mregions2::gaz_geometry()
 UK_EEZ <- mregions2::gaz_search(5696) %>% mregions2::gaz_geometry()
 IRL_EEZ <- mregions2::gaz_search(5681) %>% mregions2::gaz_geometry()
 NL_EEZ <- mregions2::gaz_search(5668) %>% mregions2::gaz_geometry()
 DK_EEZ <- mregions2::gaz_search(5674) %>% mregions2::gaz_geometry()
 FR_EEZ <- mregions2::gaz_search(5677) %>% mregions2::gaz_geometry()
 SE_EEZ <- mregions2::gaz_search(5694) %>% mregions2::gaz_geometry()
+GER_EEZ <- mregions2::gaz_search(5669) %>% mregions2::gaz_geometry()
 # PL <- mregions2::gaz_search(2244) %>% mregions2::gaz_geometry()
 # CZ <- mregions2::gaz_search(2158) %>% mregions2::gaz_geometry()
 # AUT <- mregions2::gaz_search(2146) %>% mregions2::gaz_geometry()
@@ -90,7 +91,7 @@ North_Sea <- mregions2::gaz_search(2350) %>% mregions2::gaz_geometry()
 # 02. combine data --------------------------------------------------------
 
 EEZs_4326 <- 
-  rbind(BE_EEZ, DK_EEZ, FR_EEZ, IRL_EEZ, NL_EEZ, NO_EEZ, SE_EEZ, UK_EEZ)
+  rbind(BE_EEZ, DK_EEZ, FR_EEZ, GER_EEZ, IRL_EEZ, NL_EEZ, NO_EEZ, SE_EEZ, UK_EEZ)
 
 EEZs_3035 <- st_transform(EEZs_4326, "EPSG:3035")
 
